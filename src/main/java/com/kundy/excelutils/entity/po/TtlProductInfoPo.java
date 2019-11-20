@@ -2,6 +2,9 @@ package com.kundy.excelutils.entity.po;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.springframework.util.IdGenerator;
+
+import java.math.BigDecimal;
 
 /**
  * @author kundy
@@ -20,11 +23,10 @@ public class TtlProductInfoPo {
     private String branchName;
     private Long shopId;
     private String shopName;
-    private Double price;
+    private BigDecimal price;
     private Integer stock;
     private Integer salesNum;
     private String createTime;
     private String updateTime;
-    private Byte isDel;
-
+    private String isDel;
 }

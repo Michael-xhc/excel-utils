@@ -16,4 +16,6 @@ public interface TtlProductInfoService {
 
     void export(HttpServletResponse response, String fileName);
 
+    int insertTtlProductInfoPo();
+
 }

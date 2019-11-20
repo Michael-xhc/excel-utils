@@ -7,10 +7,13 @@ import com.kundy.excelutils.mapper.TtlProductInfoMapper;
 import com.kundy.excelutils.service.TtlProductInfoService;
 import com.kundy.excelutils.utils.ExcelUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
@@ -28,6 +31,8 @@ public class TtlProductInfoServiceImpl implements TtlProductInfoService {
 
     @Autowired
     private TtlProductInfoMapper mapper;
+    @Autowired
+    private TtlProductInfoMapper ttlProductInfoMapper;
 
     @Override
     public List<TtlProductInfoPo> listProduct(Map<String, Object> map) {
@@ -40,6 +45,39 @@ public class TtlProductInfoServiceImpl implements TtlProductInfoService {
         List<TtlProductInfoPo> productInfoPos = this.multiThreadListProduct();
         ExcelUtils excelUtils = new ExcelUtils(productInfoPos, getHeaderInfo(), getFormatInfo());
         excelUtils.sendHttpResponse(response, fileName, excelUtils.getWorkbook());
+    }
+
+    @Override
+    public int insertTtlProductInfoPo() {
+        int su=0;
+        try {
+            for(int i=1; i<=1000; i++){
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+                String date = sdf.format(new Date());
+                TtlProductInfoPo ttlProductInfoPo = new TtlProductInfoPo();
+                ttlProductInfoPo.setBranchName("品牌名称"+i);
+                Long num = (long)i;
+                ttlProductInfoPo.setBranchId(num);
+                ttlProductInfoPo.setCategoryId(num);
+                ttlProductInfoPo.setCategoryName("类型名称"+i);
+                ttlProductInfoPo.setCreateTime(date);
+                ttlProductInfoPo.setIsDel("0");
+                ttlProductInfoPo.setPrice(new BigDecimal("1000"));
+                ttlProductInfoPo.setShopName("商品名称"+i);
+                ttlProductInfoPo.setSalesNum(100);
+                ttlProductInfoPo.setStock(11);
+                ttlProductInfoPo.setUpdateTime(date);
+                ttlProductInfoPo.setProductName("产品名称"+i);
+                ttlProductInfoPo.setShopId(num);
+                int number=ttlProductInfoMapper.insertTtlProductInfoPo(ttlProductInfoPo);
+                if(number>0){
+                    su++;
+                }
+            }
+        }catch (Exception e){
+            log.info("error:",e);
+        }
+        return su;
     }
 
     // 获取表头信息
@@ -74,7 +112,7 @@ public class TtlProductInfoServiceImpl implements TtlProductInfoService {
         Map<String, ExcelFormat> format = new HashMap<>();
         format.put("id", ExcelFormat.FORMAT_INTEGER);
         format.put("categoryId", ExcelFormat.FORMAT_INTEGER);
-        format.put("branchId", ExcelFormat.FORMAT_INTEGER);
+        format.put("branchId",   ExcelFormat.FORMAT_INTEGER);
         format.put("shopId", ExcelFormat.FORMAT_INTEGER);
         format.put("price", ExcelFormat.FORMAT_DOUBLE);
         format.put("stock", ExcelFormat.FORMAT_INTEGER);
